@@ -1,0 +1,62 @@
+[gd_scene format=3 uid="uid://culfgif4g4cgh"]
+
+[ext_resource type="Script" uid="uid://bw7w3tqqf0ick" path="res://scripts/game_over.gd" id="1_xeevv"]
+[ext_resource type="Texture2D" uid="uid://7mt7ygq0xexc" path="res://assets/pong_bg_2.png" id="2_tbwuq"]
+[ext_resource type="FontFile" uid="uid://ddr8bwuavm8qt" path="res://assets/font/Xolonium-Regular.ttf" id="3_racf3"]
+
+[node name="GameOver" type="Control" unique_id=510411442]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_xeevv")
+
+[node name="ColorRect" type="Sprite2D" parent="." unique_id=799393437]
+texture = ExtResource("2_tbwuq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=649942971]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -192.0
+offset_top = -152.0
+offset_right = 192.0
+offset_bottom = 152.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="WinnerLabel" type="Label" parent="VBoxContainer" unique_id=281300075]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("3_racf3")
+theme_override_font_sizes/font_size = 30
+
+[node name="ScoreLabel" type="Label" parent="VBoxContainer" unique_id=77272239]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("3_racf3")
+theme_override_font_sizes/font_size = 30
+
+[node name="RematchBtn" type="Button" parent="VBoxContainer" unique_id=1250624130]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_racf3")
+theme_override_font_sizes/font_size = 20
+text = "REMATCH"
+
+[node name="MenuBtn" type="Button" parent="VBoxContainer" unique_id=792851517]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_racf3")
+theme_override_font_sizes/font_size = 20
+text = "MENU"
+
+[connection signal="pressed" from="VBoxContainer/RematchBtn" to="." method="_on_rematch_btn_pressed"]
+[connection signal="pressed" from="VBoxContainer/MenuBtn" to="." method="_on_menu_btn_pressed"]

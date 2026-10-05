@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://b75amgi2nrc5i"]
+
+[ext_resource type="Script" uid="uid://dxmoq2snmugho" path="res://scripts/roast_overlay.gd" id="1_xp8f4"]
+[ext_resource type="FontFile" uid="uid://ddr8bwuavm8qt" path="res://assets/font/Xolonium-Regular.ttf" id="2_dp5bb"]
+
+[node name="RoastOverlay" type="CanvasLayer" unique_id=1499227985]
+script = ExtResource("1_xp8f4")
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=1768364707]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -90.0
+grow_horizontal = 2
+grow_vertical = 0
+size_flags_horizontal = 6
+size_flags_vertical = 6
+
+[node name="HintLabel" type="Label" parent="VBox" unique_id=1370727594]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+theme_override_fonts/font = ExtResource("2_dp5bb")
+theme_override_font_sizes/font_size = 40
+
+[node name="PromptLabel" type="Label" parent="VBox" unique_id=580698446]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("2_dp5bb")
+theme_override_font_sizes/font_size = 30
+text = "CPU roast CPU"

@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://s7wgnbiqw150"]
+
+[ext_resource type="FontFile" uid="uid://ddr8bwuavm8qt" path="res://assets/font/Xolonium-Regular.ttf" id="1_3er1b"]
+[ext_resource type="Script" uid="uid://c668rqkqiuvrf" path="res://scripts/main_menu.gd" id="1_hxu56"]
+[ext_resource type="Texture2D" uid="uid://7mt7ygq0xexc" path="res://assets/pong_bg_2.png" id="2_2fwvj"]
+
+[node name="Control" type="Control" unique_id=1873979519]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hxu56")
+
+[node name="ColorRect" type="Sprite2D" parent="." unique_id=769221933]
+position = Vector2(639.99994, 450.00003)
+scale = Vector2(0.99999994, 1)
+texture = ExtResource("2_2fwvj")
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=485833353]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -64.0
+offset_right = 200.0
+offset_bottom = 64.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="VBox" unique_id=494998648]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("1_3er1b")
+theme_override_font_sizes/font_size = 48
+text = "ROAST PONG"
+
+[node name="HSeparator" type="HSeparator" parent="VBox" unique_id=2014649]
+layout_mode = 2
+
+[node name="DiffLabel" type="Label" parent="VBox" unique_id=778725621]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 6
+theme_override_fonts/font = ExtResource("1_3er1b")
+text = "Difficulty"
+
+[node name="DiffRow" type="HBoxContainer" parent="VBox" unique_id=769702265]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+
+[node name="EasyBtn" type="Button" parent="VBox/DiffRow" unique_id=767837554]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_3er1b")
+text = "Easy"
+
+[node name="MediumBtn" type="Button" parent="VBox/DiffRow" unique_id=336183317]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Medium"
+
+[node name="HardBtn" type="Button" parent="VBox/DiffRow" unique_id=2133240653]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Hard"
+
+[node name="HSeparator2" type="HSeparator" parent="VBox" unique_id=1444528044]
+layout_mode = 2
+
+[node name="ScoreLabel" type="Label" parent="VBox" unique_id=339442358]
+layout_mode = 2
+
+[node name="ScoreLimit" type="SpinBox" parent="VBox" unique_id=1220131617]
+layout_mode = 2
+
+[node name="StartBtn" type="Button" parent="VBox" unique_id=189897635]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_3er1b")
+theme_override_font_sizes/font_size = 20
+text = "Start"
+
+[node name="ExitBtn" type="Button" parent="VBox" unique_id=1893288332]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_3er1b")
+theme_override_font_sizes/font_size = 20
+text = "Exit"
+
+[connection signal="pressed" from="VBox/DiffRow/EasyBtn" to="." method="_on_easy_btn_pressed"]
+[connection signal="pressed" from="VBox/DiffRow/MediumBtn" to="." method="_on_medium_btn_pressed"]
+[connection signal="pressed" from="VBox/DiffRow/HardBtn" to="." method="_on_hard_btn_pressed"]
+[connection signal="pressed" from="VBox/StartBtn" to="." method="_on_start_btn_pressed"]
+[connection signal="pressed" from="VBox/ExitBtn" to="." method="_on_exit_btn_pressed"]
