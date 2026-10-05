@@ -6,7 +6,9 @@
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge)
 
----
+## Preview
+
+<img width="1280" height="900" alt="Screenshot 2026-10-05 142920" src="https://github.com/user-attachments/assets/caa8218a-f606-44bb-a57b-c2bff576cd43" />
 
 ## 🇩🇪 Deutsch
 
