@@ -7,8 +7,10 @@ signal done
 
 var _font: FontFile
 var _is_active: bool = false
+var _wait_timer: Timer
 
-const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent"
+const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+const REQUEST_TIMEOUT := 6.0
 var API_KEY: String = ""
 
 const SYSTEM_PROMPT = """You are a Pong roast battle commentator. Two AIs are playing Pong against each other: CPU1 and CPU2.
@@ -35,94 +37,123 @@ func _ready() -> void:
 	if _font:
 		prompt_label.add_theme_font_override("font", _font)
 		hint_label.add_theme_font_override("font", _font)
+	_wait_timer = Timer.new()
+	_wait_timer.one_shot = true
+	add_child(_wait_timer)
 	hide()
+
+func _input(event: InputEvent) -> void:
+	if not _is_active:
+		return
+	var skip: bool = event.is_action_pressed("ui_accept") 		or (event is InputEventMouseButton and event.pressed)
+	if skip:
+		get_viewport().set_input_as_handled()
+		_wait_timer.stop()
+		_wait_timer.timeout.emit()
+
+func _wait(seconds: float) -> void:
+	_wait_timer.start(seconds)
+	await _wait_timer.timeout
+
+func _show_text(title: String, text: String) -> void:
+	hint_label.add_theme_font_size_override("font_size", 40 if GameSettings.large_text else 30)
+	prompt_label.text = title
+	hint_label.text = text
+	hint_label.modulate.a = 0.0
+	create_tween().tween_property(hint_label, "modulate:a", 1.0, 0.25)
 
 func activate(scorer: String, victim: String) -> void:
 	if _is_active:
-		done.emit()
 		return
-
 	_is_active = true
-
-	prompt_label.text = "%s roasts %s!" % [scorer, victim]
-	hint_label.text = "..."
 	show()
 
-	# Roast von Gemini holen
-	var roast = await _fetch_roast(scorer, victim, false)
-	hint_label.text = "%s  %s  [%d/10]" % [roast["emoji"], roast["text"], roast["score"]]
+	_show_text("%s roasts %s!" % [scorer, victim], "...")
+	var roast: Dictionary = await _fetch_roast(scorer, victim, false)
+	_show_text("%s roasts %s!" % [scorer, victim], _format(roast))
+	await _wait(3.0)
 
-	await get_tree().create_timer(2.5).timeout
+	_show_text("%s claps back!" % victim, "...")
+	var counter: Dictionary = await _fetch_roast(victim, scorer, true)
+	_show_text("%s claps back!" % victim, _format(counter))
+	await _wait(2.5)
 
-	# Konter von Gemini holen
-	prompt_label.text = "%s claps back!" % victim
-	hint_label.text = "..."
-	var counter = await _fetch_roast(victim, scorer, true)
-	hint_label.text = "%s  %s  [%d/10]" % [counter["emoji"], counter["text"], counter["score"]]
-
-	await get_tree().create_timer(2.0).timeout
 	hide()
 	_is_active = false
 	done.emit()
 
+func _format(r: Dictionary) -> String:
+	return "%s  %s  [%d/10]" % [r["emoji"], r["text"], r["score"]]
+
+func _fallback(is_counter: bool) -> Dictionary:
+	var list: Array = Roasts.COUNTERS if is_counter else Roasts.ROASTS
+	var item: Dictionary = RoastScorer.pick_weighted(list)
+	return {"text": item["text"], "emoji": item["emoji"], "score": RoastScorer.score(item["text"])}
+
 func _fetch_roast(scorer: String, victim: String, is_counter: bool) -> Dictionary:
-	var http = HTTPRequest.new()
+	# Ohne Key sofort lokale Roasts nutzen (spart die Wartezeit auf einen sinnlosen Request)
+	if API_KEY.strip_edges() == "":
+		return _fallback(is_counter)
+
+	var http := HTTPRequest.new()
+	http.timeout = REQUEST_TIMEOUT
 	add_child(http)
 
-	var user_prompt = ""
+	var user_prompt := ""
 	if is_counter:
-		user_prompt = "%s just got roasted by %s in Pong. Generate a defiant, unbothered clap back – as if the point meant nothing. Style: 'I let you have that one.' or 'Enjoy it while it lasts.'" % [scorer, victim]
+		user_prompt = "%s just got roasted by %s in Pong. Generate a defiant, unbothered clap back - as if the point meant nothing. Style: 'I let you have that one.' or 'Enjoy it while it lasts.'" % [scorer, victim]
 	else:
 		user_prompt = "%s just scored against %s in Pong. Generate a savage roast for %s." % [scorer, victim, victim]
 
 	var body = {
-		"system_instruction": {
-			"parts": [ {"text": SYSTEM_PROMPT}]
-		},
-		"contents": [ {
-			"parts": [ {"text": user_prompt}]
-		}],
+		"system_instruction": {"parts": [{"text": SYSTEM_PROMPT}]},
+		"contents": [{"parts": [{"text": user_prompt}]}],
 		"generationConfig": {
-			"maxOutputTokens": 80,
-			"temperature": 0.95
+			"maxOutputTokens": 200,
+			"temperature": 0.95,
+			"responseMimeType": "application/json",
+			"thinkingConfig": {"thinkingBudget": 0}
 		}
 	}
-
-	var headers = [
+	var headers := [
 		"Content-Type: application/json",
 		"x-goog-api-key: " + API_KEY
 	]
 
-	http.request(GEMINI_URL, headers, HTTPClient.METHOD_POST, JSON.stringify(body))
+	# request() kann sofort fehlschlagen - dann kommt kein request_completed - ohne Pruefung des Rueckgabewerts haengt das Spiel
+	var err := http.request(GEMINI_URL, headers, HTTPClient.METHOD_POST, JSON.stringify(body))
+	if err != OK:
+		http.queue_free()
+		return _fallback(is_counter)
 
-	var response = await http.request_completed
+	var response: Array = await http.request_completed
 	http.queue_free()
+	return _parse_response(response, is_counter)
 
-	return _parse_response(response)
+func _parse_response(response: Array, is_counter: bool) -> Dictionary:
+	if response[0] != HTTPRequest.RESULT_SUCCESS or response[1] != 200:
+		return _fallback(is_counter)
 
-func _parse_response(response: Array) -> Dictionary:
-	var fallback = RoastScorer.pick_weighted(Roasts.ROASTS)
-	var fallback_score = RoastScorer.score(fallback["text"])
+	var json = JSON.parse_string(response[3].get_string_from_utf8())
+	if typeof(json) != TYPE_DICTIONARY:
+		return _fallback(is_counter)
+	var candidates = json.get("candidates", [])
+	if candidates.is_empty():
+		return _fallback(is_counter)
+	var parts = candidates[0].get("content", {}).get("parts", [])
+	if parts.is_empty():
+		return _fallback(is_counter)
 
-	var response_code = response[1]
-	var body = response[3]
+	# Gemini umschliesst JSON trotz responseMimeType teils mit Markdown-Fences
+	var raw_text: String = str(parts[0].get("text", "")).strip_edges()
+	raw_text = raw_text.trim_prefix("```json").trim_prefix("```").trim_suffix("```").strip_edges()
 
-	if response_code != 200:
-		return {"text": fallback["text"], "emoji": fallback["emoji"], "score": fallback_score}
-
-	var json = JSON.parse_string(body.get_string_from_utf8())
-	if json == null:
-		return {"text": fallback["text"], "emoji": fallback["emoji"], "score": fallback_score}
-
-	var raw_text = json["candidates"][0]["content"]["parts"][0]["text"].strip_edges()
-
-	# JSON aus Antwort parsen
 	var parsed = JSON.parse_string(raw_text)
-	if parsed == null or not parsed.has("roast"):
-		return {"text": fallback["text"], "emoji": fallback["emoji"], "score": fallback_score}
+	if typeof(parsed) != TYPE_DICTIONARY or not parsed.has("roast"):
+		return _fallback(is_counter)
 
 	return {
-		"text": parsed.get("roast", fallback["text"]),
-		"emoji": parsed.get("emoji", "🔥"),
-		"score": clamp(int(parsed.get("score", 5)), 1, 10)
+		"text": str(parsed["roast"]),
+		"emoji": str(parsed.get("emoji", "🔥")),
+		"score": clampi(int(parsed.get("score", 5)), 1, 10)
 	}

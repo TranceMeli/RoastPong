@@ -1,227 +1,112 @@
 # Roast Pong
 
 ![Godot](https://img.shields.io/badge/Godot-4.x-478CBF?style=for-the-badge&logo=godot-engine&logoColor=white)
-![GDScript](https://img.shields.io/badge/GDScript-000000?style=for-the-badge&logo=godot-engine&logoColor=white)
 ![Gemini](https://img.shields.io/badge/Gemini%20API-4285F4?style=for-the-badge&logo=google&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 ![Status](https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge)
 
-## Preview
+**DE:** Pong, bei dem zwei CPU-Paddles gegeneinander spielen. Wer einen Punkt verliert, wird vom Gegner geroastet und kontert – die Sprüche kommen live von der Google Gemini API, offline aus einer lokalen Liste.
+**EN:** Pong where two CPU paddles play each other. The player who loses a point gets roasted and claps back – lines come live from the Google Gemini API, or from a local list when offline.
 
-<img width="1280" height="900" alt="Screenshot 2026-10-05 142920" src="https://github.com/user-attachments/assets/caa8218a-f606-44bb-a57b-c2bff576cd43" />
+## Screenshots
 
-## 🇩🇪 Deutsch
+| Menü / Menu | Spiel / Gameplay |
+|---|---|
+| ![Menü](docs/screenshots/menu.png) | ![Gameplay](docs/screenshots/gameplay.png) |
+| **Roast nach einem Punkt / Roast after a point** | **Game over** |
+| ![Roast](docs/screenshots/roast.png) | ![Game over](docs/screenshots/game_over.png) |
 
-### Was ist Roast Pong?
+## Features
 
-Roast Pong ist ein Pong-Spiel mit einem Twist: Zwei CPU-gesteuerte Paddles spielen gegeneinander – und wer einen Punkt verliert, wird vom Gegner geroastet. Die Roasts werden live von der **Google Gemini API** generiert und bewertet. Der Verlierer kontert automatisch. Das Spiel läuft komplett autonom, die KI sorgt für die Unterhaltung.
+- CPU gegen CPU, drei Schwierigkeitsgrade und Punktelimit (1–21) / three difficulties and a score limit (1–21)
+- Roast nach jedem Punkt plus Konter des Verlierers, jeweils mit Bewertung 1–10 / a roast after every point plus a counter, each rated 1–10
+- Fallback auf lokale Roasts ohne API-Key oder Verbindung / local fallback without API key or connection
+- Pausemenü, 3-2-1-Countdown, Lautstärke, große Roast-Schrift; Einstellungen werden gespeichert / pause menu, countdown, volume, large roast text; settings are saved
 
-### Features
+## Voraussetzungen / Requirements
 
-- 🏓 Klassisches Pong – CPU vs. CPU
-- 🤖 KI-generierte Roasts via Google Gemini 2.0 Flash
-- 🔥 Automatische Roasts nach jedem Punkt, live generiert
-- 💢 Automatischer KI-Konter vom Verlierer
-- 🧠 Roast-Scoring durch die KI (1–10) basierend auf Kürze, Schärfe, Kreativität und Überraschungseffekt
-- 📡 Fallback auf lokale Roast-Liste bei fehlender Internetverbindung
-- 🎮 Hauptmenü mit einstellbarer Schwierigkeit und Punktelimit
-- 🏆 Game Over Screen mit Rematch-Option
-- 😱 Xolonium Font für eine klare, spielgerechte Darstellung
+- [Godot](https://godotengine.org/download) 4.x (das Projekt wurde mit 4.7 erstellt / created with 4.7)
+- Optional: [Gemini API-Key](https://aistudio.google.com)
 
-### Gemini API
+## Installation
 
-Das Spiel nutzt **Google Gemini 2.0 Flash** um Roasts live zu generieren und zu bewerten.
+```bash
+git clone https://github.com/TranceMeli/RoastPong.git
+cd RoastPong
+```
 
-**Bewertungskriterien (Score 1–10):**
+Optional, für KI-Roasts / optional, for AI roasts: Vorlage kopieren und Key eintragen / copy the template and add your key:
 
-| Kriterium         | Beschreibung                                | Punkte |
-| ----------------- | ------------------------------------------- | ------ |
-| Kürze             | Unter 6 Wörter = 3, unter 9 = 2, länger = 1 | 1–3    |
-| Schärfe           | Persönlicher Angriff = 3, generisch = 1     | 1–3    |
-| Kreativität       | Unerwartete Metapher = 2, simpel = 1        | 1–2    |
-| Überraschungsende | Unerwartetes Ende = 2                       | 0–2    |
+```bash
+cp scripts/Config.gd.example scripts/Config.gd
+```
 
-**Gemini antwortet als JSON:**
+`scripts/Config.gd` steht in `.gitignore` und wird nicht committet. Ohne Key (leerer Wert) werden lokale Roasts genutzt.
+
+## Schnellstart / Quick start
+
+Projekt in Godot öffnen und **F5** drücken, oder per Kommandozeile / open the project in Godot and press **F5**, or from the command line:
+
+```bash
+godot --path .
+```
+
+## Steuerung / Controls
+
+| Taste / Key | Wirkung / Effect |
+|---|---|
+| `1` `2` `3` | Schwierigkeit im Menü / difficulty in the menu |
+| `Enter` | Start (Menü) / start (menu) |
+| `Space`, Klick / click | Roast überspringen / skip roast |
+| `P`, `Esc` | Pause an/aus / toggle pause |
+| `Esc` (Menü / menu) | Beenden / quit |
+
+## Konfiguration / Configuration
+
+| Option | Beschreibung / Description | Standard / Default |
+|---|---|---|
+| `GEMINI_KEY` in `scripts/Config.gd` | Gemini API-Key | leer / empty (lokale Roasts) |
+| Menü: Difficulty | `easy`, `medium`, `hard` | `medium` |
+| Menü: First to | Punktelimit / score limit | 7 |
+| Menü: Volume | Gesamtlautstärke / master volume | 80 % |
+| Menü: Large roast text | Größere Roast-Schrift / larger roast font | aus / off |
+
+Gespeichert wird in `user://settings.cfg`. Das Modell wird in `scripts/roast_overlay.gd` (`GEMINI_URL`) festgelegt.
+
+## Wie die Roasts entstehen / How roasts work
+
+Gemini antwortet als JSON / Gemini answers as JSON:
 
 ```json
 { "roast": "Even my grandma paddles faster.", "score": 9, "emoji": "😱" }
 ```
 
-**Fallback:** Bei fehlender Verbindung oder API-Fehler greift das Spiel automatisch auf eine lokale Roast-Liste zurück.
+Bei Fehler, Timeout (6 s) oder fehlendem Key wählt `RoastScorer` einen Spruch aus `roasts.gd` – kurze, harte Sprüche werden bevorzugt.
 
-### Setup
+## Projektstruktur / Project structure
 
-1. API-Key bei [Google AI Studio](https://aistudio.google.com) erstellen
-2. Datei `scripts/Config.gd` anlegen:
-   ```gdscript
-   extends Node
-   const GEMINI_KEY: String = "dein-key-hier"
-   ```
-3. `Config.gd` in `.gitignore` eintragen:
-   ```
-   scripts/Config.gd
-   ```
+| Pfad / Path | Inhalt / Content |
+|---|---|
+| `scenes/` | Menü, Spiel, Roast-Overlay, Game Over |
+| `scripts/main.gd` | Spielablauf: Punkte, Countdown, Pause |
+| `scripts/ball.gd`, `cpu.gd` | Ball und Paddle-KI |
+| `scripts/roast_overlay.gd` | Gemini-Anfrage und Anzeige |
+| `scripts/game_settings.gd` | Autoload: Einstellungen und Speichern |
+| `scripts/roasts.gd`, `roast_scorer.gd` | Autoloads: lokale Roasts und Bewertung |
+| `assets/` | Schrift, Grafiken, Sounds |
 
-### Projektstruktur
+## Entwicklung / Development
 
-```
-res://
-├── assets/
-│   ├── font/
-│   │   └── Xolonium-Regular.ttf
-│   └── sounds/
-├── scenes/
-│   ├── main_menu.tscn
-│   ├── main.tscn
-│   └── game_over.tscn
-└── scripts/
-	├── main.gd
-	├── ball.gd
-	├── cpu.gd
-	├── cpu2.gd
-	├── roast_overlay.gd
-	├── roast_scorer.gd
-	├── roasts.gd
-	├── game_settings.gd
-	├── Config.gd          ← nicht ins Git!
-	├── main_menu.gd
-	└── game_over.gd
+Es gibt noch keine automatisierten Tests. Prüfen, dass das Projekt fehlerfrei lädt / there are no automated tests yet. Check that the project loads without errors:
+
+```bash
+godot --headless --path . --quit-after 120
 ```
 
-### Autoloads
+## Support
 
-| Name           | Datei              | Funktion                                    |
-| -------------- | ------------------ | ------------------------------------------- |
-| `Config`       | `Config.gd`        | Gemini API-Key                              |
-| `GameSettings` | `game_settings.gd` | Schwierigkeit, Ballspeed, Score-Limit       |
-| `RoastScorer`  | `roast_scorer.gd`  | Fallback: Roast bewerten + gewichtet ziehen |
-| `Roasts`       | `roasts.gd`        | Fallback: lokale Roast- und Konter-Liste    |
+Fehler und Fragen / bugs and questions: [GitHub Issues](https://github.com/TranceMeli/RoastPong/issues)
 
-### Installation
+## Lizenz / License
 
-1. Repository klonen:
-   ```bash
-   git clone https://github.com/TranceMeli/roast-pong.git
-   ```
-2. Projekt in **Godot 4.x** öffnen
-3. `Config.gd` mit eigenem Gemini API-Key anlegen (siehe Setup)
-4. `main_menu.tscn` als Hauptszene setzen
-5. Starten mit **F5**
-
-### Steuerung
-
-Das Spiel läuft vollautomatisch – einfach zuschauen und die KI-Roasts genießen.
-
----
-
-## 🇬🇧 English
-
-### What is Roast Pong?
-
-Roast Pong is a Pong game with a twist: two CPU-controlled paddles play against each other – and whoever loses a point gets roasted by the opponent. Roasts are generated and rated live by the **Google Gemini API**. The loser automatically claps back. The game runs fully autonomously while the AI provides the entertainment.
-
-### Features
-
-- 🏓 Classic Pong – CPU vs. CPU
-- 🤖 AI-generated roasts via Google Gemini 2.0 Flash
-- 🔥 Automatic roasts after every point, generated live
-- 💢 Automatic AI counter from the loser
-- 🧠 Roast scoring by the AI (1–10) based on brevity, harshness, creativity and surprise ending
-- 📡 Fallback to local roast list when offline
-- 🎮 Main menu with adjustable difficulty and score limit
-- 🏆 Game over screen with rematch option
-- 😱 Xolonium Font for clean, game-appropriate typography
-
-### Gemini API
-
-The game uses **Google Gemini 2.0 Flash** to generate and rate roasts in real time.
-
-**Scoring criteria (score 1–10):**
-
-| Criterion       | Description                                | Points |
-| --------------- | ------------------------------------------ | ------ |
-| Brevity         | Under 6 words = 3, under 9 = 2, longer = 1 | 1–3    |
-| Harshness       | Personal attack = 3, generic = 1           | 1–3    |
-| Creativity      | Unexpected metaphor = 2, plain = 1         | 1–2    |
-| Surprise ending | Unexpected ending = 2                      | 0–2    |
-
-**Gemini responds as JSON:**
-
-```json
-{ "roast": "Even my grandma paddles faster.", "score": 9, "emoji": "😱" }
-```
-
-**Fallback:** If the connection fails or the API returns an error, the game automatically falls back to a local roast list.
-
-### Setup
-
-1. Create an API key at [Google AI Studio](https://aistudio.google.com)
-2. Create the file `scripts/Config.gd`:
-   ```gdscript
-   extends Node
-   const GEMINI_KEY: String = "your-key-here"
-   ```
-3. Add `Config.gd` to `.gitignore`:
-   ```
-   scripts/Config.gd
-   ```
-
-### Project Structure
-
-```
-res://
-├── assets/
-│   ├── font/
-│   │   └── Xolonium-Regular.ttf
-│   └── sounds/
-├── scenes/
-│   ├── main_menu.tscn
-│   ├── main.tscn
-│   └── game_over.tscn
-└── scripts/
-	├── main.gd
-	├── ball.gd
-	├── cpu.gd
-	├── cpu2.gd
-	├── roast_overlay.gd
-	├── roast_scorer.gd
-	├── roasts.gd
-	├── game_settings.gd
-	├── Config.gd          ← do not commit!
-	├── main_menu.gd
-	└── game_over.gd
-```
-
-### Autoloads
-
-| Name           | File               | Purpose                                  |
-| -------------- | ------------------ | ---------------------------------------- |
-| `Config`       | `Config.gd`        | Gemini API key                           |
-| `GameSettings` | `game_settings.gd` | Difficulty, ball speed, score limit      |
-| `RoastScorer`  | `roast_scorer.gd`  | Fallback: score and weighted pick roasts |
-| `Roasts`       | `roasts.gd`        | Fallback: local roast and counter list   |
-
-### Installation
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/TranceMeli/roast-pong.git
-   ```
-2. Open the project in **Godot 4.x**
-3. Create `Config.gd` with your own Gemini API key (see Setup)
-4. Set `main_menu.tscn` as the main scene
-5. Run with **F5**
-
-### Controls
-
-The game runs fully automatically – just sit back and enjoy the AI roasts.
-
----
-
-## Credits
-
-Made by [TranceMeli](https://github.com/TranceMeli)
-
-Font: [Xolonium](https://fontlibrary.org/en/font/xolonium) by Severin Meyer – SIL Open Font License
-
-Powered by [Google Gemini API](https://aistudio.google.com)
+[MIT](LICENSE)

@@ -1,0 +1,4 @@
+extends Node
+
+# Kopiere diese Datei nach Config.gd und trage deinen Gemini-Key ein.
+const GEMINI_KEY: String = "dein-key-hier"

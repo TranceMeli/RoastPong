@@ -6,28 +6,53 @@
 [node name="RoastOverlay" type="CanvasLayer" unique_id=1499227985]
 script = ExtResource("1_xp8f4")
 
+[node name="Panel" type="ColorRect" parent="." unique_id=1112223334]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -183.0
+grow_horizontal = 2
+grow_vertical = 0
+mouse_filter = 2
+color = Color(0, 0, 0, 0.72)
+
 [node name="VBox" type="VBoxContainer" parent="." unique_id=1768364707]
 anchors_preset = 12
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -90.0
+offset_left = 60.0
+offset_top = -178.0
+offset_right = -60.0
+offset_bottom = -10.0
 grow_horizontal = 2
 grow_vertical = 0
-size_flags_horizontal = 6
-size_flags_vertical = 6
-
-[node name="HintLabel" type="Label" parent="VBox" unique_id=1370727594]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 10
-theme_override_fonts/font = ExtResource("2_dp5bb")
-theme_override_font_sizes/font_size = 40
+mouse_filter = 2
+alignment = 1
 
 [node name="PromptLabel" type="Label" parent="VBox" unique_id=580698446]
 layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 3
+theme_override_colors/font_color = Color(1, 0.8, 0, 1)
 theme_override_fonts/font = ExtResource("2_dp5bb")
 theme_override_font_sizes/font_size = 30
 text = "CPU roast CPU"
+horizontal_alignment = 1
+
+[node name="HintLabel" type="Label" parent="VBox" unique_id=1370727594]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("2_dp5bb")
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="SkipLabel" type="Label" parent="VBox" unique_id=1998877665]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 0.45)
+theme_override_fonts/font = ExtResource("2_dp5bb")
+theme_override_font_sizes/font_size = 14
+text = "[Space] / Klick: weiter"
+horizontal_alignment = 2

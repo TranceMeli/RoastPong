@@ -1,10 +1,7 @@
 extends StaticBody2D
 
-var ball_pos: Vector2
-var dist
-var move_by
-var win_height: int
-var p_height: int
+var p_height: float
+var shape_offset_y: float
 var target_y: float = 0.0
 var noise_timer: float = 0.0
 
@@ -14,22 +11,29 @@ var CPU_NOISE: float
 const NOISE_INTERVAL := 0.4
 
 func _ready() -> void:
-	win_height = get_viewport_rect().size.y
-	p_height = $ColorRect.get_size().y
+	# Masse aus der Kollisionsform: das ColorRect ist ausgeblendet und kleiner als die Hitbox
+	p_height = $CollisionShape2D.shape.size.y
+	shape_offset_y = $CollisionShape2D.position.y
 	CPU_SPEED_FACTOR = GameSettings.cpu_factor
 	CPU_NOISE = GameSettings.noise
+	position.y = (get_parent().BOTTOM_WALL_Y / 2.0) - shape_offset_y
+	target_y = position.y
+
+func center_y() -> float:
+	return position.y + shape_offset_y
 
 func _process(delta: float) -> void:
-	ball_pos = $"../Ball".position
+	var ball = $"../Ball"
 	noise_timer -= delta
 	if noise_timer <= 0.0:
-		target_y = ball_pos.y + randf_range(-CPU_NOISE, CPU_NOISE)
+		if ball.visible:
+			target_y = ball.position.y + randf_range(-CPU_NOISE, CPU_NOISE)
+		else:
+			target_y = get_parent().BOTTOM_WALL_Y / 2.0
 		noise_timer = NOISE_INTERVAL
-	dist = position.y - target_y
-	if abs(dist) > get_parent().PADDLE_SPEED * delta:
-		move_by = get_parent().PADDLE_SPEED * delta * (dist / abs(dist)) * CPU_SPEED_FACTOR
-	else:
-		move_by = dist
-	position.y -= move_by
-	var bottom_limit = get_parent().BOTTOM_WALL_Y - p_height / 2
-	position.y = clamp(position.y, p_height / 2, bottom_limit)
+	var step: float = get_parent().PADDLE_SPEED * CPU_SPEED_FACTOR * delta
+	var c := center_y()
+	c += clamp(target_y - c, -step, step)
+	var half := p_height / 2.0
+	c = clamp(c, half, get_parent().BOTTOM_WALL_Y - half)
+	position.y = c - shape_offset_y

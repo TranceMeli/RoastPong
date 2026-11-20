@@ -4,3 +4,6 @@
 
 # API Key - do not commit
 scripts/Config.gd
+
+# Editor temp files
+*.tmp

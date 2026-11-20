@@ -30,6 +30,12 @@ Roasts="*uid://cxqiqjrf5wwuk"
 
 window/size/viewport_width=1280
 window/size/viewport_height=900
+window/stretch/mode="canvas_items"
+window/stretch/aspect="keep"
+
+[dotnet]
+
+project/assembly_name="Pong"
 
 [file_customization]
 

@@ -38,8 +38,10 @@ centered = false
 script = ExtResource("2_wp4xf")
 
 [node name="Label" type="Label" parent="." unique_id=605247072]
-offset_right = 61.0
-offset_bottom = 27.0
+offset_left = 12.0
+offset_top = 6.0
+offset_right = 82.0
+offset_bottom = 33.0
 theme_override_fonts/font = ExtResource("2_v0l8b")
 theme_override_font_sizes/font_size = 20
 text = "CPU2"
@@ -48,8 +50,10 @@ text = "CPU2"
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
-offset_left = -61.0
-offset_bottom = 25.0
+offset_left = -82.0
+offset_top = 6.0
+offset_right = -12.0
+offset_bottom = 33.0
 grow_horizontal = 0
 theme_override_fonts/font = ExtResource("2_v0l8b")
 theme_override_font_sizes/font_size = 20
@@ -200,18 +204,15 @@ autostart = true
 
 [node name="RoastOverlay" parent="." unique_id=1499227985 instance=ExtResource("7_p1hux")]
 
-[node name="RoastTimer" type="Timer" parent="." unique_id=381888699]
-
-[node name="SoundPaddle" type="AudioStreamPlayer2D" parent="." unique_id=406836703]
+[node name="SoundPaddle" type="AudioStreamPlayer" parent="." unique_id=406836703]
 stream = ExtResource("10_k65ib")
 
-[node name="SoundWall" type="AudioStreamPlayer2D" parent="." unique_id=569263261]
+[node name="SoundWall" type="AudioStreamPlayer" parent="." unique_id=569263261]
 stream = ExtResource("11_k65ib")
 
-[node name="SoundPoint" type="AudioStreamPlayer2D" parent="." unique_id=1286810905]
+[node name="SoundPoint" type="AudioStreamPlayer" parent="." unique_id=1286810905]
 stream = ExtResource("12_wscrc")
 
 [connection signal="body_entered" from="ScoreLeft" to="." method="_on_score_left_body_entered"]
 [connection signal="body_entered" from="ScoreRight" to="." method="_on_score_right_body_entered"]
 [connection signal="timeout" from="BallTimer" to="." method="_on_ball_timer_timeout"]
-[connection signal="timeout" from="RoastTimer" to="." method="_on_roast_timer_timeout"]

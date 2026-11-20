@@ -50,13 +50,13 @@ theme_override_font_sizes/font_size = 30
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_racf3")
 theme_override_font_sizes/font_size = 20
-text = "REMATCH"
+text = "Rematch"
 
 [node name="MenuBtn" type="Button" parent="VBoxContainer" unique_id=792851517]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("3_racf3")
 theme_override_font_sizes/font_size = 20
-text = "MENU"
+text = "Menu"
 
 [connection signal="pressed" from="VBoxContainer/RematchBtn" to="." method="_on_rematch_btn_pressed"]
 [connection signal="pressed" from="VBoxContainer/MenuBtn" to="." method="_on_menu_btn_pressed"]
